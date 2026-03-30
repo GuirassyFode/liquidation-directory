@@ -113,7 +113,11 @@ export default function ListingCard({ listing, compact = false }: ListingCardPro
 
   return (
     <Link href={`/listing/${listing.slug}`} className="group block">
-      <div className="bg-white rounded-lg border border-border overflow-hidden transition-all duration-200 hover:shadow-lg hover:border-gray-300 h-full flex flex-col">
+      <div className={`bg-white rounded-lg border overflow-hidden transition-all duration-200 hover:shadow-lg h-full flex flex-col ${
+        listing.featured
+          ? "border-l-4 border-l-gold border-t-border border-r-border border-b-border"
+          : "border-border hover:border-gray-300"
+      }`}>
         {/* Image */}
         <div className="relative h-44 bg-section overflow-hidden">
           <img
