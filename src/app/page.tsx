@@ -6,7 +6,7 @@ import ListingCard from "@/components/ui/ListingCard";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Liquidation Lots - Stop Overpaying for Inventory",
+  title: "Liquidation Lots - Find Warehouses & Pallet Sellers Near You",
   description: "We mapped out every liquidation warehouse, bin store, and pallet seller we could find. Search by city, browse by category, and start reselling smarter.",
 };
 
@@ -50,18 +50,18 @@ export default async function HomePage() {
   const toolListings = all.filter((l: any) => l.categories.some((c: any) => c.slug === "tools-hardware"));
 
   return (
-    <div>
-      {/* Hero - compact like B-Stock */}
-      <section className="bg-gradient-to-r from-[#1a2744] to-[#1C1C2E] py-10 px-4 border-b border-white/5">
+    <div className="bg-white">
+      {/* Hero - B-Stock blue style */}
+      <section className="bg-hero py-12 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-                Find liquidation warehouses <span className="text-mint">near you</span>
+                Find liquidation warehouses near you
               </h1>
-              <p className="text-text-muted text-sm max-w-lg">
+              <p className="text-white/70 text-sm max-w-lg">
                 We tracked down every pallet seller, bin store, and liquidation warehouse
-                across the US. Search them all in one place.
+                across the US. Search them all in one place &mdash; free.
               </p>
             </div>
             <div className="w-full lg:w-[420px] shrink-0">
@@ -72,39 +72,39 @@ export default async function HomePage() {
       </section>
 
       {/* Filter tabs - like B-Stock nav */}
-      <section className="bg-card border-b border-white/5 overflow-x-auto">
-        <div className="max-w-6xl mx-auto px-4 flex items-center gap-1">
-          <Link href="/search" className="px-4 py-3 text-sm font-medium text-text-muted hover:text-white hover:bg-white/5 transition-colors whitespace-nowrap rounded-t">
+      <section className="bg-white border-b border-border overflow-x-auto shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 flex items-center gap-0.5">
+          <Link href="/search" className="px-4 py-3 text-sm font-medium text-text-muted hover:text-hero hover:bg-hero/5 transition-colors whitespace-nowrap border-b-2 border-transparent hover:border-hero">
             All Listings
           </Link>
           {cats.slice(0, 7).map((cat: any) => (
             <Link
               key={cat.slug}
               href={`/category/${cat.slug}`}
-              className="px-4 py-3 text-sm font-medium text-text-muted hover:text-white hover:bg-white/5 transition-colors whitespace-nowrap rounded-t"
+              className="px-4 py-3 text-sm font-medium text-text-muted hover:text-hero hover:bg-hero/5 transition-colors whitespace-nowrap border-b-2 border-transparent hover:border-hero"
             >
               {cat.name}
             </Link>
           ))}
-          <Link href="/#categories" className="px-4 py-3 text-sm font-medium text-text-muted hover:text-white hover:bg-white/5 transition-colors whitespace-nowrap rounded-t">
+          <Link href="/#categories" className="px-4 py-3 text-sm font-medium text-text-muted hover:text-hero hover:bg-hero/5 transition-colors whitespace-nowrap border-b-2 border-transparent hover:border-hero">
             All Categories &darr;
           </Link>
         </div>
       </section>
 
-      {/* Featured carousel - horizontal scroll like B-Stock */}
+      {/* Featured carousel */}
       <section className="py-8 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-lg font-bold text-white">
+              <h2 className="text-lg font-bold text-text-primary">
                 Featured Warehouses
               </h2>
               <p className="text-text-muted text-xs mt-0.5">
                 Verified spots with solid reputations &middot; {featured.length} listings
               </p>
             </div>
-            <Link href="/search" className="text-mint hover:text-mint/80 text-xs font-medium">
+            <Link href="/search" className="text-hero hover:text-hero/80 text-xs font-medium">
               View More
             </Link>
           </div>
@@ -124,14 +124,14 @@ export default async function HomePage() {
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-lg font-bold text-white">
-                  📱 Electronics &amp; Tech
+                <h2 className="text-lg font-bold text-text-primary">
+                  Electronics &amp; Tech
                 </h2>
                 <p className="text-text-muted text-xs mt-0.5">
                   TVs, phones, computers, and more &middot; {electronicListings.length} listings
                 </p>
               </div>
-              <Link href="/category/electronics" className="text-mint hover:text-mint/80 text-xs font-medium">
+              <Link href="/category/electronics" className="text-hero hover:text-hero/80 text-xs font-medium">
                 View More
               </Link>
             </div>
@@ -152,14 +152,14 @@ export default async function HomePage() {
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-lg font-bold text-white">
-                  📦 Mixed Pallets &amp; General Merchandise
+                <h2 className="text-lg font-bold text-text-primary">
+                  Mixed Pallets &amp; General Merchandise
                 </h2>
                 <p className="text-text-muted text-xs mt-0.5">
                   Variety lots from major retailers &middot; {mixedListings.length} listings
                 </p>
               </div>
-              <Link href="/category/mixed-pallets" className="text-mint hover:text-mint/80 text-xs font-medium">
+              <Link href="/category/mixed-pallets" className="text-hero hover:text-hero/80 text-xs font-medium">
                 View More
               </Link>
             </div>
@@ -180,14 +180,14 @@ export default async function HomePage() {
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-lg font-bold text-white">
-                  🔧 Tools &amp; Hardware
+                <h2 className="text-lg font-bold text-text-primary">
+                  Tools &amp; Hardware
                 </h2>
                 <p className="text-text-muted text-xs mt-0.5">
                   Power tools, hand tools, hardware &middot; {toolListings.length} listings
                 </p>
               </div>
-              <Link href="/category/tools-hardware" className="text-mint hover:text-mint/80 text-xs font-medium">
+              <Link href="/category/tools-hardware" className="text-hero hover:text-hero/80 text-xs font-medium">
                 View More
               </Link>
             </div>
@@ -203,10 +203,10 @@ export default async function HomePage() {
       )}
 
       {/* Browse all categories grid */}
-      <section id="categories" className="py-12 px-4">
+      <section id="categories" className="py-12 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-8">
-            <h2 className="text-xl font-bold text-white mb-1">
+            <h2 className="text-xl font-bold text-text-primary mb-1">
               All Categories
             </h2>
             <p className="text-text-muted text-sm">
@@ -227,10 +227,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Why this exists - keep the human touch */}
-      <section className="py-12 px-4 bg-section border-t border-white/5">
+      {/* Why this exists */}
+      <section className="py-12 px-4 bg-section border-t border-border">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-xl font-bold text-white mb-3">
+          <h2 className="text-xl font-bold text-text-primary mb-3">
             Why we built this
           </h2>
           <p className="text-text-muted text-sm leading-relaxed mb-6">
@@ -240,10 +240,10 @@ export default async function HomePage() {
             and searchable. Free to use, no signup.
           </p>
           <div className="flex gap-3 justify-center">
-            <Link href="/search" className="bg-mint hover:bg-mint/90 text-dark font-semibold px-5 py-2.5 rounded-lg text-sm transition-colors">
+            <Link href="/search" className="bg-hero hover:bg-hero/90 text-white font-semibold px-5 py-2.5 rounded-lg text-sm transition-colors">
               Browse all listings
             </Link>
-            <Link href="/about" className="border border-white/10 hover:border-white/20 text-white px-5 py-2.5 rounded-lg text-sm transition-colors">
+            <Link href="/about" className="border border-border hover:border-gray-400 text-text-primary px-5 py-2.5 rounded-lg text-sm transition-colors">
               Our story
             </Link>
           </div>
@@ -251,18 +251,18 @@ export default async function HomePage() {
       </section>
 
       {/* Stats */}
-      <section className="py-10 px-4">
+      <section className="py-10 px-4 bg-white">
         <div className="max-w-4xl mx-auto flex justify-center gap-12 text-center">
           <div>
-            <p className="text-2xl font-bold text-white">25+</p>
+            <p className="text-2xl font-bold text-text-primary">25+</p>
             <p className="text-text-muted text-xs mt-1">warehouses</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-white">20</p>
+            <p className="text-2xl font-bold text-text-primary">20</p>
             <p className="text-text-muted text-xs mt-1">cities</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-white">Free</p>
+            <p className="text-2xl font-bold text-hero">Free</p>
             <p className="text-text-muted text-xs mt-1">always</p>
           </div>
         </div>

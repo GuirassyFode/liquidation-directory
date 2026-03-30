@@ -20,19 +20,19 @@ export default function SearchBar() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-card rounded-xl shadow-lg p-3 flex flex-col sm:flex-row gap-3"
+      className="bg-white rounded-xl shadow-lg p-2 flex flex-col sm:flex-row gap-2"
     >
       <input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search by city, state, or zip..."
-        className="flex-1 bg-dark rounded-lg px-4 py-3 text-sm text-text-body placeholder-text-muted outline-none focus:ring-2 focus:ring-mint/50 transition"
+        className="flex-1 bg-section rounded-lg px-4 py-3 text-sm text-text-primary placeholder-text-muted outline-none focus:ring-2 focus:ring-hero/30 border border-border transition"
       />
       <select
         value={category}
         onChange={(e) => setCategory(e.target.value)}
-        className="bg-dark rounded-lg px-4 py-3 text-sm text-text-body outline-none focus:ring-2 focus:ring-mint/50 transition cursor-pointer"
+        className="bg-section rounded-lg px-4 py-3 text-sm text-text-primary outline-none focus:ring-2 focus:ring-hero/30 border border-border transition cursor-pointer"
       >
         <option value="">All Categories</option>
         {CATEGORIES.map((cat) => (
@@ -43,7 +43,7 @@ export default function SearchBar() {
       </select>
       <button
         type="submit"
-        className="bg-mint hover:bg-mint/90 text-dark font-semibold px-6 py-3 rounded-lg text-sm transition-colors whitespace-nowrap"
+        className="bg-hero hover:bg-hero/90 text-white font-semibold px-6 py-3 rounded-lg text-sm transition-colors whitespace-nowrap"
       >
         Search
       </button>

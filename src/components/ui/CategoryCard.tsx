@@ -15,9 +15,9 @@ export default function CategoryCard({
 }: CategoryCardProps) {
   return (
     <Link href={`/category/${slug}`} className="group block">
-      <div className="bg-card rounded-xl p-6 text-center border border-transparent hover:border-mint/30 transition-all duration-300">
+      <div className="bg-white rounded-xl p-6 text-center border border-border hover:border-hero/30 hover:shadow-md transition-all duration-300">
         <span className="text-4xl block mb-3">{icon}</span>
-        <h3 className="text-white font-semibold text-sm group-hover:text-mint transition-colors">
+        <h3 className="text-text-primary font-semibold text-sm group-hover:text-hero transition-colors">
           {name}
         </h3>
         {listingCount !== undefined && (

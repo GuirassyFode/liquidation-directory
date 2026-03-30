@@ -13,13 +13,13 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-[rgba(28,28,46,0.85)] backdrop-blur-md border-b border-white/5">
+    <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-0.5 text-xl font-bold">
-            <span className="text-white">Liquidation</span>
-            <span className="text-mint">Lots</span>
+            <span className="text-text-primary">Liquidation</span>
+            <span className="text-hero">Lots</span>
           </Link>
 
           {/* Desktop Nav */}
@@ -28,7 +28,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-text-body hover:text-mint transition-colors text-sm font-medium"
+                className="text-text-muted hover:text-hero transition-colors text-sm font-medium"
               >
                 {link.label}
               </Link>
@@ -38,7 +38,7 @@ export default function Header() {
           {/* Mobile Hamburger */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 text-text-body hover:text-mint transition-colors"
+            className="md:hidden p-2 text-text-muted hover:text-hero transition-colors"
             aria-label="Toggle menu"
           >
             <svg
@@ -69,14 +69,14 @@ export default function Header() {
 
       {/* Mobile Slide-in Panel */}
       {mobileOpen && (
-        <div className="md:hidden bg-card border-t border-white/5">
+        <div className="md:hidden bg-white border-t border-border">
           <nav className="flex flex-col px-4 py-4 gap-4">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="text-text-body hover:text-mint transition-colors text-sm font-medium py-2"
+                className="text-text-muted hover:text-hero transition-colors text-sm font-medium py-2"
               >
                 {link.label}
               </Link>
