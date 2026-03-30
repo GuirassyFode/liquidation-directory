@@ -3,74 +3,39 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <footer className="bg-footer border-t border-white/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Column 1: Logo + Description */}
-          <div>
-            <Link href="/" className="flex items-center gap-0.5 text-xl font-bold mb-4">
+      <div className="max-w-4xl mx-auto px-4 py-10">
+        <div className="flex flex-col sm:flex-row justify-between gap-8">
+          <div className="max-w-xs">
+            <Link href="/" className="text-lg font-bold mb-2 inline-block">
               <span className="text-white">Liquidation</span>
               <span className="text-mint">Lots</span>
             </Link>
             <p className="text-text-muted text-sm leading-relaxed">
-              The #1 directory for liquidation lots. Find the best deals on
-              liquidation merchandise near you.
+              A directory of liquidation warehouses across the US.
+              Free to use, no signup.
             </p>
           </div>
 
-          {/* Column 2: Quick Links */}
-          <div>
-            <h3 className="text-white font-semibold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
-              {[
-                { label: "Browse", href: "/search" },
-                { label: "Categories", href: "/#categories" },
-                { label: "About", href: "/about" },
-                { label: "Submit Listing", href: "/about#submit" },
-              ].map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-text-muted hover:text-mint transition-colors text-sm"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Column 3: Connect */}
-          <div>
-            <h3 className="text-white font-semibold mb-4">Connect</h3>
-            <ul className="space-y-2">
-              <li>
-                <a
-                  href="https://twitter.com/SIATSERVICES"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-text-muted hover:text-mint transition-colors text-sm"
-                >
-                  Twitter @SIATSERVICES
-                </a>
-              </li>
-              <li>
-                <a
-                  href="mailto:contact@siatservices.com"
-                  className="text-text-muted hover:text-mint transition-colors text-sm"
-                >
-                  contact@siatservices.com
-                </a>
-              </li>
-            </ul>
+          <div className="flex gap-10 text-sm">
+            <div className="space-y-2">
+              <Link href="/search" className="block text-text-muted hover:text-white transition-colors">Browse</Link>
+              <Link href="/#categories" className="block text-text-muted hover:text-white transition-colors">Categories</Link>
+              <Link href="/about" className="block text-text-muted hover:text-white transition-colors">About</Link>
+            </div>
+            <div className="space-y-2">
+              <Link href="/about#submit" className="block text-text-muted hover:text-white transition-colors">Submit a listing</Link>
+              <a href="https://x.com/SIATSERVICES" target="_blank" rel="noopener noreferrer" className="block text-text-muted hover:text-white transition-colors">
+                X / Twitter
+              </a>
+              <a href="mailto:contact@siatservices.com" className="block text-text-muted hover:text-white transition-colors">
+                Email us
+              </a>
+            </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-10 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="text-text-muted text-xs">
-            &copy; 2025 SIAT Services. All rights reserved.
-          </p>
-          <p className="text-text-muted text-xs">Built by SIAT Services</p>
+        <div className="mt-8 pt-6 border-t border-white/5 text-text-muted/50 text-xs">
+          Made in Washington DC by SIAT Services &middot; {new Date().getFullYear()}
         </div>
       </div>
     </footer>
