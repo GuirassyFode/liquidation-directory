@@ -24,11 +24,19 @@ export default async function HomePage() {
     .eq("featured", true)
     .limit(6);
 
-  const listings = (featuredListings || []).map((listing: any) => ({
+  const { data: allListings } = await supabase
+    .from("listings")
+    .select("*, listing_categories(categories(*))")
+    .order("name");
+
+  const transformListing = (listing: any) => ({
     ...listing,
     categories: listing.listing_categories?.map((lc: any) => lc.categories) || [],
     listing_categories: undefined,
-  }));
+  });
+
+  const featured = (featuredListings || []).map(transformListing);
+  const all = (allListings || []).map(transformListing);
 
   const cats = (categories || []).map((cat: any) => ({
     ...cat,
@@ -36,78 +44,176 @@ export default async function HomePage() {
     listing_categories: undefined,
   }));
 
+  // Group listings by category for carousels
+  const electronicListings = all.filter((l: any) => l.categories.some((c: any) => c.slug === "electronics"));
+  const mixedListings = all.filter((l: any) => l.categories.some((c: any) => c.slug === "mixed-pallets"));
+  const toolListings = all.filter((l: any) => l.categories.some((c: any) => c.slug === "tools-hardware"));
+
   return (
     <div>
-      {/* Hero */}
-      <section className="bg-gradient-to-b from-section to-dark pt-16 pb-24 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-mint text-sm font-semibold tracking-widest uppercase mb-4">
-            Free directory &middot; No signup required
-          </p>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight">
-            Find liquidation warehouses<br className="hidden sm:block" />
-            <span className="text-mint">before everyone else does.</span>
-          </h1>
-          <p className="text-text-muted text-lg mb-10 max-w-xl mx-auto leading-relaxed">
-            We spent weeks tracking down every pallet seller, bin store, and liquidation
-            warehouse across the US. Now you can search them all in one place.
-          </p>
-          <div className="max-w-2xl mx-auto">
-            <SearchBar />
-          </div>
-          <p className="text-text-muted/60 text-xs mt-4">
-            Try: &ldquo;Houston&rdquo;, &ldquo;Miami&rdquo;, &ldquo;electronics&rdquo;, or just hit search to browse everything
-          </p>
-        </div>
-      </section>
-
-      {/* How it works - conversational */}
-      <section className="py-14 px-4 border-t border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-sm font-semibold text-mint tracking-widest uppercase text-center mb-10">
-            How it works
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="text-3xl mb-3">1.</div>
-              <h3 className="text-white font-bold mb-2">Search your area</h3>
-              <p className="text-text-muted text-sm leading-relaxed">
-                Type your city, state, or zip. We&apos;ll show you every liquidation
-                spot we know about nearby.
+      {/* Hero - compact like B-Stock */}
+      <section className="bg-gradient-to-r from-[#1a2744] to-[#1C1C2E] py-10 px-4 border-b border-white/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+                Find liquidation warehouses <span className="text-mint">near you</span>
+              </h1>
+              <p className="text-text-muted text-sm max-w-lg">
+                We tracked down every pallet seller, bin store, and liquidation warehouse
+                across the US. Search them all in one place.
               </p>
             </div>
-            <div className="text-center">
-              <div className="text-3xl mb-3">2.</div>
-              <h3 className="text-white font-bold mb-2">Check the details</h3>
-              <p className="text-text-muted text-sm leading-relaxed">
-                Hours, phone numbers, what they carry, whether they&apos;re
-                walk-in friendly. All the info you actually need.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl mb-3">3.</div>
-              <h3 className="text-white font-bold mb-2">Go get deals</h3>
-              <p className="text-text-muted text-sm leading-relaxed">
-                Show up, find pallets at 10-20% of retail, and flip them
-                on Facebook Marketplace or eBay. That&apos;s it.
-              </p>
+            <div className="w-full lg:w-[420px] shrink-0">
+              <SearchBar />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Categories */}
-      <section id="categories" className="py-14 px-4 bg-section">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-              What are you looking for?
+      {/* Filter tabs - like B-Stock nav */}
+      <section className="bg-card border-b border-white/5 overflow-x-auto">
+        <div className="max-w-6xl mx-auto px-4 flex items-center gap-1">
+          <Link href="/search" className="px-4 py-3 text-sm font-medium text-text-muted hover:text-white hover:bg-white/5 transition-colors whitespace-nowrap rounded-t">
+            All Listings
+          </Link>
+          {cats.slice(0, 7).map((cat: any) => (
+            <Link
+              key={cat.slug}
+              href={`/category/${cat.slug}`}
+              className="px-4 py-3 text-sm font-medium text-text-muted hover:text-white hover:bg-white/5 transition-colors whitespace-nowrap rounded-t"
+            >
+              {cat.name}
+            </Link>
+          ))}
+          <Link href="/#categories" className="px-4 py-3 text-sm font-medium text-text-muted hover:text-white hover:bg-white/5 transition-colors whitespace-nowrap rounded-t">
+            All Categories &darr;
+          </Link>
+        </div>
+      </section>
+
+      {/* Featured carousel - horizontal scroll like B-Stock */}
+      <section className="py-8 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-lg font-bold text-white">
+                Featured Warehouses
+              </h2>
+              <p className="text-text-muted text-xs mt-0.5">
+                Verified spots with solid reputations &middot; {featured.length} listings
+              </p>
+            </div>
+            <Link href="/search" className="text-mint hover:text-mint/80 text-xs font-medium">
+              View More
+            </Link>
+          </div>
+          <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
+            {featured.map((listing: any) => (
+              <div key={listing.id} className="snap-start shrink-0 w-[260px]">
+                <ListingCard listing={listing} compact />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Electronics carousel */}
+      {electronicListings.length > 0 && (
+        <section className="py-8 px-4 bg-section">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-lg font-bold text-white">
+                  📱 Electronics &amp; Tech
+                </h2>
+                <p className="text-text-muted text-xs mt-0.5">
+                  TVs, phones, computers, and more &middot; {electronicListings.length} listings
+                </p>
+              </div>
+              <Link href="/category/electronics" className="text-mint hover:text-mint/80 text-xs font-medium">
+                View More
+              </Link>
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
+              {electronicListings.map((listing: any) => (
+                <div key={listing.id} className="snap-start shrink-0 w-[260px]">
+                  <ListingCard listing={listing} compact />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Mixed Pallets carousel */}
+      {mixedListings.length > 0 && (
+        <section className="py-8 px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-lg font-bold text-white">
+                  📦 Mixed Pallets &amp; General Merchandise
+                </h2>
+                <p className="text-text-muted text-xs mt-0.5">
+                  Variety lots from major retailers &middot; {mixedListings.length} listings
+                </p>
+              </div>
+              <Link href="/category/mixed-pallets" className="text-mint hover:text-mint/80 text-xs font-medium">
+                View More
+              </Link>
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
+              {mixedListings.map((listing: any) => (
+                <div key={listing.id} className="snap-start shrink-0 w-[260px]">
+                  <ListingCard listing={listing} compact />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Tools carousel */}
+      {toolListings.length > 0 && (
+        <section className="py-8 px-4 bg-section">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-lg font-bold text-white">
+                  🔧 Tools &amp; Hardware
+                </h2>
+                <p className="text-text-muted text-xs mt-0.5">
+                  Power tools, hand tools, hardware &middot; {toolListings.length} listings
+                </p>
+              </div>
+              <Link href="/category/tools-hardware" className="text-mint hover:text-mint/80 text-xs font-medium">
+                View More
+              </Link>
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide -mx-4 px-4">
+              {toolListings.map((listing: any) => (
+                <div key={listing.id} className="snap-start shrink-0 w-[260px]">
+                  <ListingCard listing={listing} compact />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Browse all categories grid */}
+      <section id="categories" className="py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-xl font-bold text-white mb-1">
+              All Categories
             </h2>
-            <p className="text-text-muted">
-              Pick a category to narrow things down
+            <p className="text-text-muted text-sm">
+              Browse by what you&apos;re looking for
             </p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             {cats.map((cat: any) => (
               <CategoryCard
                 key={cat.slug}
@@ -121,91 +227,43 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Featured */}
-      <section className="py-14 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-2xl font-bold text-white">
-                Worth checking out
-              </h2>
-              <p className="text-text-muted text-sm mt-1">
-                Verified warehouses with solid reputations
-              </p>
-            </div>
-            <Link
-              href="/search"
-              className="text-mint hover:text-mint/80 text-sm font-medium transition-colors hidden sm:block"
-            >
-              See all listings &rarr;
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {listings.map((listing: any) => (
-              <ListingCard key={listing.id} listing={listing} />
-            ))}
-          </div>
-          <div className="text-center mt-8 sm:hidden">
-            <Link
-              href="/search"
-              className="text-mint hover:text-mint/80 text-sm font-medium"
-            >
-              See all listings &rarr;
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Social proof / why this exists */}
-      <section className="py-14 px-4 bg-section border-t border-white/5">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">
+      {/* Why this exists - keep the human touch */}
+      <section className="py-12 px-4 bg-section border-t border-white/5">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-xl font-bold text-white mb-3">
             Why we built this
           </h2>
-          <p className="text-text-muted leading-relaxed mb-6">
+          <p className="text-text-muted text-sm leading-relaxed mb-6">
             I got tired of Googling &ldquo;liquidation pallets near me&rdquo; and
-            getting the same three ads over and over. So I started making a list.
-            Drove to warehouses. Called phone numbers. Checked which ones were
-            actually legit. This directory is that list &mdash; cleaned up and
-            searchable.
+            getting the same ads over and over. So I started tracking down every
+            warehouse I could find. This directory is that list &mdash; cleaned up
+            and searchable. Free to use, no signup.
           </p>
-          <p className="text-text-muted leading-relaxed mb-8">
-            It&apos;s free to use. If you own a liquidation warehouse and want
-            to be listed (or update your info), just reach out.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/search"
-              className="bg-mint hover:bg-mint/90 text-dark font-semibold px-6 py-3 rounded-lg text-sm transition-colors"
-            >
+          <div className="flex gap-3 justify-center">
+            <Link href="/search" className="bg-mint hover:bg-mint/90 text-dark font-semibold px-5 py-2.5 rounded-lg text-sm transition-colors">
               Browse all listings
             </Link>
-            <Link
-              href="/about"
-              className="border border-white/10 hover:border-white/20 text-white font-semibold px-6 py-3 rounded-lg text-sm transition-colors"
-            >
-              Learn more about us
+            <Link href="/about" className="border border-white/10 hover:border-white/20 text-white px-5 py-2.5 rounded-lg text-sm transition-colors">
+              Our story
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Quick stats - more casual */}
-      <section className="py-14 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-3 gap-6 text-center">
-            <div>
-              <p className="text-3xl font-bold text-white">25+</p>
-              <p className="text-text-muted text-sm mt-1">warehouses listed</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold text-white">20</p>
-              <p className="text-text-muted text-sm mt-1">cities covered</p>
-            </div>
-            <div>
-              <p className="text-3xl font-bold text-white">Free</p>
-              <p className="text-text-muted text-sm mt-1">no signup needed</p>
-            </div>
+      {/* Stats */}
+      <section className="py-10 px-4">
+        <div className="max-w-4xl mx-auto flex justify-center gap-12 text-center">
+          <div>
+            <p className="text-2xl font-bold text-white">25+</p>
+            <p className="text-text-muted text-xs mt-1">warehouses</p>
+          </div>
+          <div>
+            <p className="text-2xl font-bold text-white">20</p>
+            <p className="text-text-muted text-xs mt-1">cities</p>
+          </div>
+          <div>
+            <p className="text-2xl font-bold text-white">Free</p>
+            <p className="text-text-muted text-xs mt-1">always</p>
           </div>
         </div>
       </section>

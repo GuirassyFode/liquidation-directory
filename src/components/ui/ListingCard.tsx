@@ -5,50 +5,96 @@ import type { Listing } from "@/types";
 
 interface ListingCardProps {
   listing: Listing;
+  compact?: boolean;
 }
 
-export default function ListingCard({ listing }: ListingCardProps) {
+export default function ListingCard({ listing, compact = false }: ListingCardProps) {
+  // Pick a color based on the first category
+  const categoryColors: Record<string, string> = {
+    "exercise-equipment": "text-teal",
+    "electronics": "text-purple",
+    "appliances": "text-coral",
+    "furniture": "text-gold",
+    "clothing-apparel": "text-mint",
+    "tools-hardware": "text-coral",
+    "home-goods": "text-teal",
+    "automotive": "text-gold",
+    "toys-games": "text-purple",
+    "mixed-pallets": "text-mint",
+  };
+
+  const firstCat = listing.categories?.[0];
+  const accentColor = firstCat ? (categoryColors[firstCat.slug] || "text-mint") : "text-mint";
+
   return (
     <Link href={`/listing/${listing.slug}`} className="group block">
-      <div className="bg-card rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-mint/5 hover:scale-[1.02]">
-        {/* Photo */}
-        <div className="relative h-48 bg-gradient-to-br from-dark to-card flex items-center justify-center">
-          {listing.photos.length > 0 ? (
-            <img
-              src={listing.photos[0]}
-              alt={listing.name}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <span className="text-5xl opacity-50">📦</span>
+      <div className="bg-card rounded-lg border border-white/5 overflow-hidden transition-all duration-200 hover:border-white/15 hover:shadow-lg hover:shadow-black/20 h-full flex flex-col">
+        {/* Top section - category label + image */}
+        <div className="relative">
+          {/* Category label bar */}
+          {firstCat && (
+            <div className="bg-dark/80 px-3 py-1.5 flex items-center justify-between">
+              <span className={`text-xs font-semibold ${accentColor}`}>
+                {firstCat.icon} {firstCat.name}
+              </span>
+              {listing.featured && (
+                <span className="bg-gold/20 text-gold text-[10px] font-bold px-2 py-0.5 rounded">
+                  FEATURED
+                </span>
+              )}
+            </div>
           )}
-          {listing.featured && (
-            <span className="absolute top-3 right-3 bg-gold text-dark text-xs font-semibold px-2 py-1 rounded-full">
-              Featured
-            </span>
-          )}
+
+          {/* Image area */}
+          <div className="h-36 bg-gradient-to-br from-section to-card flex items-center justify-center">
+            {listing.photos && listing.photos.length > 0 ? (
+              <img
+                src={listing.photos[0]}
+                alt={listing.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="text-center">
+                <span className="text-4xl block mb-1 opacity-40">
+                  {firstCat?.icon || "📦"}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Content */}
-        <div className="p-4">
-          <h3 className="text-lg font-semibold text-white group-hover:text-mint transition-colors truncate">
+        <div className="p-3 flex-1 flex flex-col">
+          <h3 className="text-sm font-bold text-white group-hover:text-mint transition-colors leading-snug mb-1">
             {listing.name}
           </h3>
-          <p className="text-text-muted text-sm mt-1">
-            {listing.city}, {listing.state}
+          <p className="text-text-muted text-xs mb-2">
+            {listing.city}, {listing.state} {listing.zip}
           </p>
-          {listing.categories && listing.categories.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-3">
-              {listing.categories.map((cat) => (
+
+          {/* Description snippet */}
+          {listing.description && !compact && (
+            <p className="text-text-muted/70 text-xs leading-relaxed mb-3 line-clamp-2 flex-1">
+              {listing.description}
+            </p>
+          )}
+
+          {/* Bottom info bar */}
+          <div className="flex items-center justify-between mt-auto pt-2 border-t border-white/5">
+            <div className="flex gap-2">
+              {listing.categories?.slice(0, 2).map((cat) => (
                 <span
                   key={cat.id}
-                  className="bg-mint/10 text-mint text-xs px-2 py-0.5 rounded-full"
+                  className="text-[10px] text-text-muted bg-dark px-1.5 py-0.5 rounded"
                 >
                   {cat.name}
                 </span>
               ))}
             </div>
-          )}
+            <span className="text-mint text-xs font-medium group-hover:translate-x-0.5 transition-transform">
+              View &rarr;
+            </span>
+          </div>
         </div>
       </div>
     </Link>
